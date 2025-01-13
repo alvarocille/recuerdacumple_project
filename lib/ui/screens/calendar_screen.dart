@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:calendar_view/calendar_view.dart';
+import 'package:recuerdacumple/ui/screens/list_screen.dart';
+import '../widgets/bottom_navigation_bar.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -9,31 +11,7 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  int _selectedIndex = 0; // Variable para almacenar el índice seleccionado
-
-  // Método para manejar la navegación al seleccionar un ítem del BottomNavigationBar
-  void _onSectionChoose(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (_selectedIndex) {
-      case 0:
-        // Navegar a la pantalla del calendario
-        Navigator.pushNamed(context, '/calendar');
-        break;
-      case 1:
-        // Navegar a la pantalla de lista
-        Navigator.pushNamed(context, '/list');
-        break;
-      case 2:
-        // Navegar a la pantalla de amigos
-        Navigator.pushNamed(context, '/friends');
-        break;
-      default:
-        break;
-    }
-  }
+  final int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -84,31 +62,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
             child: MonthView(
               cellAspectRatio: 1.4,
               onCellTap: (date, events) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Seleccionaste: $date')),
+                Navigator.pushNamed(
+                  context,
+                  '/list',
+                  arguments: date,
                 );
               },
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Establece el índice seleccionado
-        onTap: _onSectionChoose, // Maneja el cambio de pantalla al pulsar los ítems
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendario',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Lista',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.language),
-            label: 'Amigos',
-          ),
-        ],
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex
       ),
     );
   }

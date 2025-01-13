@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '/models/birthday.dart';
+import '../widgets/bottom_navigation_bar.dart'; // Importa el widget personalizado
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -17,17 +20,23 @@ class _ListScreenState extends State<ListScreen> {
   ];
 
   List<Birthday> filteredBirthdays = [];
-  String searchQuery = '';
 
   @override
-  void initState() {
-    super.initState();
-    filteredBirthdays = birthdays; // Inicializamos con todos los cumpleaños
+  void did() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is DateTime) {
+      ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('hola')),
+      );
+      _filterBirthdays(args.toString());
+    } else {
+      filteredBirthdays = birthdays;
+    }
   }
 
   void _filterBirthdays(String query) {
     setState(() {
-      searchQuery = query;
       filteredBirthdays = birthdays
           .where((birthday) =>
               birthday.name.toLowerCase().contains(query.toLowerCase()) ||
@@ -112,22 +121,7 @@ class _ListScreenState extends State<ListScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendario',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Lista',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.language),
-            label: 'Amigos',
-          ),
-        ],
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(currentIndex: 1),
     );
   }
 }
